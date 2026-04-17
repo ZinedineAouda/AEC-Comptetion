@@ -1,0 +1,491 @@
+.qgis-platform {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #020617;
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.platform-header {
+  height: 70px;
+  background: #0f172a;
+  border-bottom: 3px solid #3b82f6;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  justify-content: space-between;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.platform-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-box {
+  background: #3b82f6;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+.logo-icon {
+  color: white;
+}
+
+.platform-brand h1 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.platform-brand p {
+  font-size: 11px;
+  color: #64748b;
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.platform-metrics {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: rgba(15, 23, 42, 0.5);
+  padding: 8px 20px;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+
+.metric-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.platform-viewport {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Control Panel Sidebar */
+.control-panel {
+  width: 320px;
+  background: #0f172a;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 32px;
+}
+
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.layer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.layer-item.active {
+  color: #f1f5f9;
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.risk-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.risk-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.risk-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.risk-bar-track {
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.risk-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.risk-bar-fill.danger { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+.risk-bar-fill.warning { background: #f59e0b; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+.risk-bar-fill.safe { background: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+.risk-bar-fill.neutral { background: #94a3b8; }
+
+.multi-risk-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.risk-bar-container.mini {
+  gap: 4px;
+}
+
+.risk-bar-container.mini .risk-bar-label {
+  font-size: 11px;
+}
+
+.risk-bar-container.mini .risk-bar-track {
+  height: 4px;
+}
+
+.panel-info-card {
+  margin-top: auto;
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  gap: 12px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Map Engine Viewport */
+.map-engine-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.map-inner-host {
+  flex: 1;
+}
+
+.qgis-platform .map-wrapper {
+  height: 100% !important;
+  margin-bottom: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.selected-feature-card.highlight {
+  border-left: 4px solid #3b82f6;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
+}
+
+.feature-zone {
+  margin-bottom: 12px;
+}
+
+.precision-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #4ade80;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.intelligence-section {
+  background: rgba(15, 23, 42, 0.4);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.insight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.insight-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.insight-note {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.zone-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.summary-item strong {
+  color: #22c55e;
+  font-size: 18px;
+}
+
+.stat-pill {
+  background: rgba(59, 130, 246, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-pill .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #3b82f6;
+}
+
+.stat-pill .value {
+  font-size: 20px;
+  font-weight: 800;
+  color: white;
+}
+
+.info-icon-box {
+  background: #3b82f6;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.feature-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #3b82f6;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.feature-name {
+  font-size: 18px;
+  margin: 4px 0 12px 0;
+  color: #f8fafc;
+}
+
+.zone-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+
+.zone-pill.zone-3 { background: #ef4444; }
+.zone-pill.zone-2 { background: #fbbf24; color: #92400e; }
+.zone-pill.zone-1 { background: #22c55e; }
+.zone-pill.zone-0 { background: #9ca3af; }
+
+.sidebar-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  color: #475569;
+  padding: 20px 0;
+}
+
+.sidebar-empty-state p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.map-legend-box {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.legend-dot.z-3 { background: #ef4444; }
+.legend-dot.z-2 { background: #fbbf24; }
+.legend-dot.z-1 { background: #22c55e; }
+
+.layer-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+.layer-item label {
+  cursor: pointer;
+}
+
+.map-search-overlay {
+  position: absolute;
+  top: 24px;
+  left: 320px;
+  z-index: 500;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.map-search-overlay input {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 14px;
+  width: 100%;
+  outline: none;
+}
+
+.map-coords {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 4px 12px;
+  font-size: 10px;
+  color: #475569;
+  font-family: monospace;
+  display: flex;
+  gap: 16px;
+  border-top-left-radius: 8px;
+  z-index: 500;
+}
+
+.action-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}

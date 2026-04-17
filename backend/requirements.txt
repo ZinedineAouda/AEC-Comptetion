@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pandas
+numpy
+catboost
+pydantic
+openpyxl
+python-multipart
+shutil
+gzip
+re
+json
+typing
+os
+datetime

@@ -1,0 +1,392 @@
+{
+    "ALGER": {
+        "default": "III",
+        "groups": {}
+    },
+    "TIPAZA": {
+        "default": "III",
+        "groups": {}
+    },
+    "BOUMERDES": {
+        "default": "III",
+        "groups": {
+            "IIb": [
+                "AFIR",
+                "BENCHOUD",
+                "TAOUERGA",
+                "BAGHLIA",
+                "OUED AISSA",
+                "NACIRIA",
+                "BORDJ MENAIEL",
+                "ISSER",
+                "BENI AMRANE",
+                "SOUK EL HAD",
+                "BOUZEGZA KEDAR",
+                "EL KHAROUBA",
+                "LARBATACHE",
+                "KHEMIS EL KHECHNA",
+                "OULED MOUSSA",
+                "HAMMADI"
+            ],
+            "IIa": [
+                "TIMEZRIT",
+                "AMMAL",
+                "CHAABET EL AMEUR"
+            ]
+        }
+    },
+    "CHLEF": {
+        "default": "III",
+        "groups": {
+            "IIb": [
+                "EL KARIMIA",
+                "HARCHOUN",
+                "SENDJAS",
+                "OUED SLY",
+                "BOUKADIR"
+            ],
+            "IIa": [
+                "OULED BEN ABD EL KADER",
+                "HADJADJ"
+            ]
+        }
+    },
+    "BLIDA": {
+        "default": "III",
+        "groups": {
+            "IIb": [
+                "MEFTAH",
+                "DJEBABRA",
+                "SOUHANE",
+                "LARBAA",
+                "OULED SELAMA",
+                "BOUGARA",
+                "HAMMAM MELOUANE",
+                "AIN ROMANA"
+            ]
+        }
+    },
+    "AIN DEFLA": {
+        "default": "IIa",
+        "groups": {
+            "III": [
+                "TACHETA",
+                "ZOUGAGHA",
+                "EL ABADIA",
+                "AIN BOUYAHIA",
+                "EL ATTAF"
+            ],
+            "IIb": [
+                "EL AMRA",
+                "MEKHTARIA",
+                "ARIB",
+                "ROUINA",
+                "AIN DEFLA",
+                "BOURASHED",
+                "ZEDDINE",
+                "TIBERKANINE",
+                "SEN ALLAH",
+                "MELIANA",
+                "AIN TORKI",
+                "HAMMAM RIGHA",
+                "AIN BENIAN",
+                "HOUCEINIA",
+                "BOUMADFAA"
+            ]
+        }
+    },
+    "MEDEA": {
+        "default": "IIa",
+        "groups": {
+            "IIb": [
+                "EL HAMDANIA",
+                "MEDEA",
+                "TAMESGUIDA"
+            ],
+            "I": [
+                "BOU AICHE",
+                "CHAHBOUNIA",
+                "BOUGHZOOL",
+                "SAREG",
+                "MEFTAHA",
+                "OULED MAREF",
+                "EL AOUNET",
+                "AIN BOUCIF",
+                "SIDI DAMED",
+                "AIN OUKSIR",
+                "CHENIGUEL"
+            ]
+        }
+    },
+    "RELIZANE": {
+        "default": "IIa",
+        "groups": {
+            "III": [
+                "MEDIOUNA",
+                "SIDI MHAMED BEN ALI",
+                "MAZOUNA",
+                "EL GUETTAR"
+            ],
+            "IIb": [
+                "MERDJA SIDI ABED",
+                "OUED RHIOU",
+                "OUARTZENZ",
+                "DJIDIOUIA",
+                "HAMRI",
+                "BENI ZENTIS"
+            ]
+        }
+    },
+    "MOSTAGANEM": {
+        "default": "IIa",
+        "groups": {
+            "III": [
+                "OULED BOUGHALEM",
+                "ACHAACHA",
+                "KHADRA",
+                "NEKMARIA"
+            ],
+            "IIb": [
+                "SIDI LAKHDAR",
+                "TASGHAIT",
+                "OULED MAALAH"
+            ]
+        }
+    },
+    "MASCARA": {
+        "default": "IIa",
+        "groups": {
+            "I": [
+                "AIN FARES",
+                "AIN FEKRAN",
+                "BOUHANIFIA",
+                "GUERDJOU",
+                "OUED TARIA",
+                "GHRIS",
+                "BENAIN",
+                "MOKHDA",
+                "AOUF",
+                "GHAROUS",
+                "NESMOT",
+                "MHAMID",
+                "HACHEM",
+                "OUED EL ABTAL",
+                "AIN FERRAH"
+            ]
+        }
+    },
+    "MSILA": {
+        "default": "I",
+        "groups": {
+            "IIa": [
+                "BENI ILMANE",
+                "OUNOUGHA",
+                "HAMMAM DALA A",
+                "TARMOUNT",
+                "OULED MANSOUR",
+                "MSILA",
+                "MTARFA",
+                "MAADID",
+                "OULED DERRADJ",
+                "OULED ADDI",
+                "DAHAHNA",
+                "BERHOUM",
+                "AIN KADRA",
+                "MAGRA",
+                "BELAIBA"
+            ]
+        }
+    },
+    "TIZI OUZOU": {
+        "default": "IIa",
+        "groups": {
+            "IIb": [
+                "MIZRANA"
+            ]
+        }
+    },
+    "ADRAR": {
+        "default": "0",
+        "groups": {}
+    },
+    "LAGHOUAT": {
+        "default": "I",
+        "groups": {}
+    },
+    "OUM EL BOUAGHI": {
+        "default": "I",
+        "groups": {}
+    },
+    "BATNA": {
+        "default": "I",
+        "groups": {}
+    },
+    "BEJAIA": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "BISKRA": {
+        "default": "I",
+        "groups": {}
+    },
+    "BECHAR": {
+        "default": "0",
+        "groups": {}
+    },
+    "TAMANGHASSET": {
+        "default": "0",
+        "groups": {}
+    },
+    "TEBESSA": {
+        "default": "I",
+        "groups": {}
+    },
+    "TLEMCEN": {
+        "default": "I",
+        "groups": {}
+    },
+    "TIARET": {
+        "default": "I",
+        "groups": {}
+    },
+    "DJELFA": {
+        "default": "I",
+        "groups": {}
+    },
+    "JIJEL": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "SETIF": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "SAIDA": {
+        "default": "I",
+        "groups": {}
+    },
+    "SKIKDA": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "SIDI BEL ABBES": {
+        "default": "I",
+        "groups": {}
+    },
+    "ANNABA": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "GUELMA": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "CONSTANTINE": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "OUARGLA": {
+        "default": "0",
+        "groups": {}
+    },
+    "ORAN": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "EL BAYADH": {
+        "default": "I",
+        "groups": {}
+    },
+    "ILLIZI": {
+        "default": "0",
+        "groups": {}
+    },
+    "BORDJ BOU ARRERIDJ": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "BOUIRA": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "EL TARF": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "TINDOUF": {
+        "default": "0",
+        "groups": {}
+    },
+    "TISSEMSILT": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "EL OUED": {
+        "default": "0",
+        "groups": {}
+    },
+    "KHENCHELA": {
+        "default": "I",
+        "groups": {}
+    },
+    "SOUK AHRAS": {
+        "default": "I",
+        "groups": {}
+    },
+    "MILA": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "NAAMA": {
+        "default": "I",
+        "groups": {}
+    },
+    "AIN TEMOUCHENT": {
+        "default": "IIa",
+        "groups": {}
+    },
+    "GHARDAIA": {
+        "default": "0",
+        "groups": {}
+    },
+    "BENI ABBES": {
+        "default": "0",
+        "groups": {}
+    },
+    "TIMIMOUN": {
+        "default": "0",
+        "groups": {}
+    },
+    "TOUGGOURT": {
+        "default": "0",
+        "groups": {}
+    },
+    "DJANET": {
+        "default": "0",
+        "groups": {}
+    },
+    "IN SALAH": {
+        "default": "0",
+        "groups": {}
+    },
+    "IN GUEZZAM": {
+        "default": "0",
+        "groups": {}
+    },
+    "EL MGHAIR": {
+        "default": "0",
+        "groups": {}
+    },
+    "EL MENIAA": {
+        "default": "0",
+        "groups": {}
+    },
+    "OULED DJELLAL": {
+        "default": "I",
+        "groups": {}
+    },
+    "BORDJ B MOKHTAR": {
+        "default": "0",
+        "groups": {}
+    }
+}

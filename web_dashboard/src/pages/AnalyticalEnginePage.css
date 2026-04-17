@@ -1,0 +1,240 @@
+.engine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.technical-status {
+  background: rgba(59, 130, 246, 0.1) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: 30px;
+}
+
+.engine-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.engine-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease;
+}
+
+.engine-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+.card-desc {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* Regulatory Table Styles */
+.rpa-matrix-card {
+  grid-column: span 12;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+}
+
+.regulatory-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.regulatory-table th {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.regulatory-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: #fff;
+}
+
+.regulatory-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.zone-cell {
+  font-weight: 700;
+  color: var(--primary) !important;
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.strategic-cell {
+  color: var(--warning) !important;
+  font-weight: 700;
+}
+
+/* Equation Visualizer */
+.equation-card {
+  grid-column: span 7;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.6) 0%, rgba(30, 41, 59, 0.4) 100%);
+}
+
+.equation-visualizer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 20px 0;
+}
+
+.main-formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 26px;
+  text-align: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.5);
+  color: #fff;
+}
+
+.term-a { color: var(--primary); font-weight: 700; }
+.term-y { color: var(--warning); font-weight: 700; }
+.term-f { color: var(--danger); font-weight: 700; }
+
+.formula-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.dot-a { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+.dot-v { background: #fff; box-shadow: 0 0 10px #fff; }
+.dot-y { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
+.dot-f { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+
+/* Constraint Matrix */
+.constraint-card {
+  grid-column: span 5;
+}
+
+.constraint-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.constraint-item {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.constraint-zone {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.constraint-val {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+}
+
+.constraint-risk {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.risk-low { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+.risk-moderate { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+.risk-high { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+.risk-critical { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+.constraint-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.analyzer-card {
+  grid-column: span 12;
+}
+
+.analyzer-card .card-header {
+  margin-bottom: 12px;
+}
+
+@media (max-width: 1200px) {
+  .equation-card, .constraint-card {
+    grid-column: span 12;
+  }
+}
