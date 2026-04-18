@@ -98,7 +98,7 @@ const MyDatabasePage: React.FC = () => {
         sort_by: sortBy, sort_dir: sortDir,
         filter_zone: filterZone, filter_verdict: filterVerdict,
       });
-      const res = await fetch(`http://localhost:8000/api/portfolio/data?${params}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/portfolio/data?${params}`);
       const json = await res.json();
       setData(json.data || []);
       setTotal(json.total || 0);
@@ -109,7 +109,7 @@ const MyDatabasePage: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/portfolio/stats');
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/portfolio/stats`);
       const json = await res.json();
       if (json.total_policies) setStats(json);
     } catch {}
@@ -127,7 +127,7 @@ const MyDatabasePage: React.FC = () => {
     }
     searchTimer.current = setTimeout(async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/portfolio/search?q=${encodeURIComponent(q)}`);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/portfolio/search?q=${encodeURIComponent(q)}`);
         const json = await res.json();
         setSearchResults(json.results || []);
       } catch {}
@@ -142,7 +142,7 @@ const MyDatabasePage: React.FC = () => {
     const fd = new FormData();
     fd.append('file', file);
     try {
-      const res = await fetch('http://localhost:8000/api/portfolio/upload', { method: 'POST', body: fd });
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/portfolio/upload`, { method: 'POST', body: fd });
       const json = await res.json();
       setUploadResult(json);
       if (json.status === 'success') {

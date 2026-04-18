@@ -23,7 +23,7 @@ const AnalyticalEnginePage: React.FC = () => {
     <div className="page-container animate-fade-in">
       <div className="engine-header">
         <div>
-          <h1 className="page-title">Technical Regulatory Engine</h1>
+           <h1 className="page-title">GAM Technical Regulatory Engine</h1>
           <p className="page-subtitle">Official RPA 99/2003 Calculation Logic & Technical Tables</p>
         </div>
         <div className="engine-status glass-panel technical-status">

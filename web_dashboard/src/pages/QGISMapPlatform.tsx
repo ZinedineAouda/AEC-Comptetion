@@ -14,7 +14,7 @@ const QGISMapPlatform: React.FC = () => {
   
   // Dynamic Layer Registry
   const [layers, setLayers] = useState<any[]>([]);
-  const [activeLayerIds, setActiveLayerIds] = useState<string[]>([]);
+  const [activeLayerId, setActiveLayerId] = useState<string | null>(null);
   
   const [selectedFeature, setSelectedFeature] = useState<any>(null);
   const [aiIntel, setAiIntel] = useState<any>(null);
@@ -24,9 +24,9 @@ const QGISMapPlatform: React.FC = () => {
     const fetchConfig = async () => {
       try {
         const [intelRes, r2Res, layersRes] = await Promise.all([
-          fetch('http://localhost:8000/api/geo/intelligence'),
-          fetch('http://localhost:8000/api/model/r2'),
-          fetch('http://localhost:8000/api/geo/layers')
+          fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/geo/intelligence`),
+          fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/model/r2`),
+          fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/geo/layers`)
         ]);
         const intelData = await intelRes.json();
         const r2Data = await r2Res.json();
@@ -35,8 +35,8 @@ const QGISMapPlatform: React.FC = () => {
         setAiIntel(intelData);
         setModelR2(r2Data.r2);
         setLayers(layersData);
-        // Default to all layers active for initial view
-        setActiveLayerIds(layersData.map((l: any) => l.id));
+        // Default to the first layer for initial view
+        if (layersData.length > 0) setActiveLayerId(layersData[0].id);
       } catch (err) {
         console.error("Discovery fetch failed", err);
       }
@@ -45,29 +45,28 @@ const QGISMapPlatform: React.FC = () => {
   }, []);
 
   const toggleLayer = (id: string) => {
-    setActiveLayerIds(prev => 
-      prev.includes(id) ? prev.filter(l => l !== id) : [...prev, id]
-    );
+    setActiveLayerId(id);
   };
 
-  const isLayerActive = (id: string) => activeLayerIds.includes(id);
+  const isLayerActive = (id: string) => activeLayerId === id;
+
 
   return (
     <div className={`qgis-platform ${isFullscreen ? 'fullscreen' : ''}`}>
       <header className="platform-header">
         <div className="platform-brand">
           <div className="logo-box">
-            <Globe className="logo-icon" size={24} />
+            <img src="/logo.png" alt="GAM" className="header-logo" />
           </div>
           <div>
-            <h1>QGIS Risk Intelligence</h1>
-            <p>Algerian Seismic Vulnerability & Exposure Mapper</p>
+            <h1>GAM Risk Intelligence</h1>
+            <p>Seismic Vulnerability & Exposure Mapper</p>
           </div>
         </div>
 
         <div className="platform-metrics">
           <div className="metric-item">
-            <Database size={14} className="text-blue-400" />
+            <Database size={14} className="metric-icon" />
             <div className="metric-content">
               <span className="metric-label">Geo-Collection</span>
               <span className="metric-value">{geoStats?.total_policies?.toLocaleString() || '...'} Assets</span>
@@ -75,7 +74,7 @@ const QGISMapPlatform: React.FC = () => {
           </div>
           <div className="metric-divider" />
           <div className="metric-item">
-            <Activity size={14} className="text-orange-400" />
+            <Activity size={14} className="metric-icon-accent" />
             <div className="metric-content">
               <span className="metric-label">Regulatory Mesh</span>
               <span className="metric-value">{geoStats?.total_zones || '0'} Regions</span>
@@ -103,33 +102,38 @@ const QGISMapPlatform: React.FC = () => {
             </div>
             <div className="layer-list">
               {layers.map(layer => (
-                <div className={`layer-item ${isLayerActive(layer.id) ? 'active' : ''}`} key={layer.id}>
+                <div 
+                  className={`layer-item ${isLayerActive(layer.id) ? 'active' : ''}`} 
+                  key={layer.id}
+                  onClick={() => toggleLayer(layer.id)}
+                >
                   <input 
-                    type="checkbox" 
+                    type="radio" 
+                    name="layer-selection"
                     checked={isLayerActive(layer.id)} 
-                    onChange={() => toggleLayer(layer.id)} 
+                    onChange={() => {}} // Controlled via parent div onClick
                     id={`layer-${layer.id}`}
                   />
                   <label htmlFor={`layer-${layer.id}`}>{layer.name}</label>
                 </div>
               ))}
-              {layers.length === 0 && <p className="text-xs text-slate-500">Discovering layers...</p>}
+              {layers.length === 0 && <p className="text-xs text-muted-sm">Discovering layers...</p>}
             </div>
           </div>
 
-          <div className="panel-section intelligence-section">
+            <div className="panel-section intelligence-section">
             <div className="section-title">
               <Activity size={14} />
               <span>AI Intelligence: {
-                activeLayerIds.length > 0 ? "Autonomous Perspective" : "System Idle"
+                activeLayerId ? "Autonomous Perspective" : "System Idle"
               }</span>
             </div>
             
             <div className="intelligence-content animate-fade-in">
-              {activeLayerIds.length > 0 && aiIntel ? (
+              {activeLayerId && aiIntel ? (
                 <div className="insight-card ai-mode animate-fade-in">
                   <div className="insight-header">
-                    <ShieldCheck size={16} className="text-blue-500" />
+                    <ShieldCheck size={16} className="icon-accent" />
                     <span>Cross-Layer Analytics</span>
                   </div>
                   <div className="vulnerability-grid">
@@ -137,7 +141,7 @@ const QGISMapPlatform: React.FC = () => {
                       <div className="vuln-pill" key={vuln.type}>
                         <div className="vuln-type">{vuln.type}</div>
                         <div className={`vuln-score severity-${vuln.severity}`}>{vuln.score}%</div>
-                        <div className="vuln-label">{vuln.severity.toUpperCase()} RISK</div>
+                        <div className={`vuln-label severity-${vuln.severity}`}>{vuln.severity.toUpperCase()} RISK</div>
                       </div>
                     ))}
                   </div>
@@ -190,25 +194,18 @@ const QGISMapPlatform: React.FC = () => {
 
           <div className="panel-info-card">
             <div className="info-icon-box"><ShieldCheck size={14} /></div>
-            <p>AI Engine Internalized - Regulatory Compliance Verified.</p>
+            <p>GAM Engine Internalized - Regulatory Compliance Verified.</p>
           </div>
         </aside>
 
         <main className="map-engine-wrap">
-          <div className="map-search-overlay">
-            <Search size={16} />
-            <input type="text" placeholder="Locate Wilaya or Asset..." />
-          </div>
-          
           <div className="map-inner-host">
             <MapRiskVisualizer 
-              activeLayers={layers.filter(l => activeLayerIds.includes(l.id))}
+              activeLayers={layers.filter(l => activeLayerId === l.id)}
               onFeatureSelect={setSelectedFeature}
               onStatsReady={setGeoStats}
             />
           </div>
-
-
           <div className="map-coords">
             <span>Projection: EPSG:4326 (WGS 84)</span>
           </div>
@@ -217,6 +214,5 @@ const QGISMapPlatform: React.FC = () => {
     </div>
   );
 };
-
 
 export default QGISMapPlatform;

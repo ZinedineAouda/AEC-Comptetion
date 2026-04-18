@@ -1,12 +1,14 @@
 :root {
-    --primary: #3b82f6;
-    --primary-glow: rgba(59, 130, 246, 0.5);
-    --secondary: #6366f1;
-    --accent: #10b981;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --glass-bg: rgba(15, 23, 42, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary: #2e7d32;
+    --primary-bright: #43a047;
+    --primary-glow: rgba(46, 125, 50, 0.5);
+    --secondary: #81c784;
+    --accent: #c6cc29;
+    --accent-glow: rgba(198, 204, 41, 0.3);
+    --danger: #ef5350;
+    --warning: #ffa726;
+    --glass-bg: rgba(11, 35, 18, 0.7);
+    --glass-border: rgba(198, 204, 41, 0.1);
     --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
@@ -14,11 +16,11 @@
     padding: 2rem;
     max-width: 1600px;
     margin: 0 auto;
-    color: #f8fafc;
+    color: #e8f5e9;
     font-family: 'Inter', -apple-system, system-ui, sans-serif;
     min-height: 100vh;
-    background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent),
-                radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.05), transparent);
+    background: radial-gradient(circle at top right, rgba(46, 125, 50, 0.05), transparent),
+                radial-gradient(circle at bottom left, rgba(198, 204, 41, 0.03), transparent);
 }
 
 .sim-header-v4 {
@@ -39,13 +41,14 @@
     font-weight: 800;
     margin-bottom: 0.5rem;
     letter-spacing: -0.04em;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    background: linear-gradient(135deg, #e8f5e9 0%, #c6cc29 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .hero-text p {
-    color: #94a3b8;
+    color: #81c784;
     font-size: 1.1rem;
     font-weight: 400;
 }
@@ -105,7 +108,7 @@
     gap: 0.5rem;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: #81c784;
     margin-bottom: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -115,8 +118,8 @@
 .input-group input {
     width: 100%;
     padding: 1rem 1.25rem;
-    background: rgba(15, 23, 42, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(11, 35, 18, 0.5);
+    border: 1px solid rgba(46, 125, 50, 0.15);
     border-radius: 12px;
     color: #fff;
     font-size: 0.95rem;
@@ -126,20 +129,20 @@
 
 .input-group select:focus, 
 .input-group input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(198, 204, 41, 0.1);
 }
 
 .highlight-input {
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(46, 125, 50, 0.08);
     padding: 1.5rem;
     border-radius: 16px;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(46, 125, 50, 0.2);
 }
 
 .readonly-input {
     background: rgba(0, 0, 0, 0.3) !important;
-    color: var(--primary) !important;
+    color: var(--accent) !important;
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700 !important;
     font-size: 1.2rem !important;
@@ -154,13 +157,13 @@
 
 .range-box input[type="range"] {
     flex: 1;
-    accent-color: var(--primary);
+    accent-color: var(--accent);
 }
 
 .range-box span {
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--accent);
     min-width: 3.5rem;
     text-align: right;
 }
@@ -168,7 +171,7 @@
 .sim-run-btn {
     width: 100%;
     padding: 1.25rem;
-    background: var(--primary);
+    background: linear-gradient(135deg, #2e7d32, #1b5e20);
     border: none;
     border-radius: 16px;
     color: white;
@@ -181,12 +184,13 @@
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
 }
 
 .sim-run-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 10px 20px -5px var(--primary-glow);
-    background: #2563eb;
+    background: linear-gradient(135deg, #388e3c, #2e7d32);
 }
 
 .sim-run-btn.loading {
@@ -226,17 +230,17 @@
 .kpi-card:hover { transform: translateY(-5px); }
 
 .kpi-card.highlight {
-    border-left: 4px solid var(--primary);
+    border-left: 4px solid var(--accent);
 }
 
 .kpi-card.success {
-    border-left: 4px solid var(--accent);
+    border-left: 4px solid var(--secondary);
 }
 
 .kpi-card .label {
     font-size: 0.75rem;
     font-weight: 700;
-    color: #94a3b8;
+    color: #81c784;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
@@ -249,7 +253,7 @@
     font-family: 'JetBrains Mono', monospace;
 }
 
-.kpi-card .u { font-size: 1rem; color: #475569; margin-left: 0.5rem; }
+.kpi-card .u { font-size: 1rem; color: #4caf50; margin-left: 0.5rem; }
 
 .main-chart-area {
     padding: 2rem;
@@ -264,7 +268,7 @@
     margin-bottom: 2rem;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: #81c784;
 }
 
 .secondary-grid {
@@ -286,12 +290,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(46, 125, 50, 0.08);
 }
 
 .stat-row:last-child { border-bottom: none; }
 
-.stat-row span { color: #94a3b8; font-size: 0.9rem; }
+.stat-row span { color: #81c784; font-size: 0.9rem; }
 .stat-row strong { 
     color: #fff; 
     font-family: 'JetBrains Mono', monospace;
@@ -299,13 +303,13 @@
 }
 
 .stat-row.highlight {
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(46, 125, 50, 0.08);
     margin: 0 -2rem;
     padding: 1.5rem 2rem;
 }
 
 .stat-row.highlight strong {
-    color: var(--primary);
+    color: var(--accent);
     font-size: 1.4rem;
 }
 
@@ -316,7 +320,7 @@
     align-items: center;
     justify-content: center;
     background: var(--glass-bg);
-    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border: 1px dashed rgba(46, 125, 50, 0.15);
     border-radius: 32px;
     text-align: center;
     padding: 4rem;
@@ -353,3 +357,25 @@
 .recharts-bar-rectangle:hover {
     filter: brightness(1.2) drop-shadow(0 0 5px var(--primary));
 }
+
+.icon-btn {
+    background: rgba(46, 125, 50, 0.08);
+    border: 1px solid rgba(46, 125, 50, 0.15);
+    color: #81c784;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.text-primary { color: var(--primary) !important; }

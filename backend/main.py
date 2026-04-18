@@ -132,6 +132,29 @@ def lookup_rpa(wilaya: str, commune: str, group: str = "1A"):
         "premium": premium
     }
 
+class EvaluateClientInput(BaseModel):
+    property_type: str = "Residential"
+    zone_rpa: str = "I"
+    importance_group: str = "2"
+    capital_assure: float = 10000000
+    construction_year: int = 2010
+    floors: int = 1
+
+@app.post("/api/evaluate-client")
+def evaluate_client(params: EvaluateClientInput):
+    try:
+        result = catboost_engine.evaluate_request(
+            property_type=params.property_type,
+            zone_rpa=params.zone_rpa,
+            capital_assure=params.capital_assure,
+            importance_group=params.importance_group,
+            construction_year=params.construction_year,
+            floors=params.floors
+        )
+        return result
+    except Exception as e:
+        return {"status": "ERROR", "reason": str(e), "estimate": None}
+
 @app.post("/api/simulation/run")
 def run_simulation(params: SimulationInput):
     try:
@@ -148,78 +171,61 @@ def run_simulation(params: SimulationInput):
 
 @app.get("/api/geo/layers")
 def list_available_layers():
-    # Autonomous discovery of geospatial assets
+    # Autonomous discovery of geospatial assets with styling metadata
     discovered = []
     
-    # 1. Physical Files
-    if os.path.exists(DATA_DIR):
-        for f in os.listdir(DATA_DIR):
-            if f.endswith(".geojson"):
-                name = f.replace(".geojson", "").replace("_", " ").title()
-                discovered.append({
-                    "id": f,
-                    "name": f"GIS: {name}",
-                    "type": "vector",
-                    "url": f"/api/geo/layer/{f}"
-                })
-    
-    # 2. Virtual/Live Layers
-    discovered.append({
-        "id": "portfolio-locations",
-        "name": "Live: Portfolio Concentration",
-        "type": "points",
-        "url": "/api/geo/locations"
-    })
+    # Layer Registry for metadata-driven visualization
+    METADATA = {
+        "rpa_zone.geojson": {
+            "name": "RPA 99/2003 Seismic Zones",
+            "targetProperty": "zone_rpa",
+            "scaleType": "categorical",
+            "palette": "RPA",
+            "description": "Unified Regulatory Seismic Hazard Mapping."
+        },
+        "gam_prime_net.geojson": {
+            "name": "Algeria Communes (Financial Exposure)",
+            "targetProperty": "gam_prime",
+            "scaleType": "graduated",
+            "palette": "YlOrRd",
+            "breakpoints": [30000, 150000, 750000, 3000000, 10000000],
+            "description": "QGIS Ported Dataset: Net Premium Exposure by Commune."
+        }
+    }
+
+    # Strictly Limited Layer Registry (Hardcoded per User Request)
+    discovered = [
+        {
+            "id": "rpa_zone.geojson",
+            "name": "GIS: Rpa Zone",
+            "type": "vector",
+            "url": "/api/geo/layer/rpa_zone.geojson",
+            "metadata": METADATA["rpa_zone.geojson"]
+        },
+        {
+            "id": "gam_prime_net.geojson",
+            "name": "GIS: Gam Prime Net",
+            "type": "vector",
+            "url": "/api/geo/layer/gam_prime_net.geojson",
+            "metadata": METADATA["gam_prime_net.geojson"]
+        }
+    ]
     
     return discovered
 
-@app.get("/api/geo/layer/{layer_id}")
-def serve_generic_layer(layer_id: str):
-    path = os.path.join(DATA_DIR, layer_id)
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="Layer not found")
-        
-    try:
-        with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
-            registry = json.load(f)
-        
-        # Build lookup maps for automated risk coloring
-        wilaya_map = {normalize_match(k): v.get("default", "I") for k, v in registry.items()}
-        commune_map = {}
-        for w_name, w_info in registry.items():
-            if "groups" in w_info:
-                for zone, communes in w_info["groups"].items():
-                    for c in communes:
-                        commune_map[normalize_match(c)] = zone
 
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            
-        for feature in data.get("features", []):
-            props = feature["properties"]
-            # Intelligent RPA Zone Injection
-            if props.get("zone_rpa") is None:
-                # Try Commune match first
-                name = normalize_match(props.get("NAME") or props.get("commune") or "")
-                if name in commune_map:
-                    props["zone_rpa"] = commune_map[name]
-                else:
-                    # Fallback to Wilaya match
-                    w_name = normalize_match(props.get("NAME_1") or props.get("wilaya") or "")
-                    props["zone_rpa"] = wilaya_map.get(w_name, "I")
-            else:
-                props["zone_rpa"] = str(props["zone_rpa"])
-                
-        return data
-    except Exception as e:
-        return {"error": str(e)}
+from functools import lru_cache
 
-# ----------------- LEGACY GEO ENDPOINTS -----------------
+_LAYER_CACHE = {}
 
+@lru_cache(maxsize=10000)
 def normalize_match(name: str):
     if not name: return ""
     # Strip accents and special markers
-    n = unicodedata.normalize('NFKD', str(name)).encode('ASCII', 'ignore').decode('utf-8')
+    try:
+        n = unicodedata.normalize('NFKD', str(name)).encode('ASCII', 'ignore').decode('utf-8')
+    except:
+        n = str(name)
     n = n.upper().strip()
     # Handle common abbreviations and punctuation
     n = n.replace("B.B ", "BORDJ BOU ")
@@ -234,6 +240,78 @@ def normalize_match(name: str):
     # Strip double spaces
     while "  " in n: n = n.replace("  ", " ")
     return n.strip()
+
+@app.get("/api/geo/layer/{layer_id}")
+def serve_generic_layer(layer_id: str):
+    if layer_id in _LAYER_CACHE:
+        return _LAYER_CACHE[layer_id]
+
+    path = os.path.join(DATA_DIR, layer_id)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail="Layer not found")
+        
+    try:
+        # Only process if registry exists
+        registry = {}
+        if os.path.exists(REGISTRY_PATH):
+            with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+                registry = json.load(f)
+        
+        # Build lookup maps for automated risk coloring
+        wilaya_map = {normalize_match(k): v.get("default", "I") for k, v in registry.items()}
+        commune_map = {}
+        for w_name, w_info in registry.items():
+            if "groups" in w_info:
+                for zone, communes in w_info["groups"].items():
+                    for c in communes:
+                        commune_map[normalize_match(c)] = zone
+
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        # Optimization: Only inject if missing
+        for feature in data.get("features", []):
+            props = feature["properties"]
+            
+            # Intelligent RPA Zone Injection (Skip if already present)
+            if props.get("zone_rpa") is None:
+                # Try multiple name candidates for robustness
+                candidates = [
+                    props.get("NAME"), 
+                    props.get("commune"), 
+                    props.get("NAME_2"), # Commune in GADM/Financial geojsons
+                    props.get("NAME_3")  # Alternative commune level
+                ]
+                
+                matched = False
+                for raw_name in candidates:
+                    if raw_name:
+                        name = normalize_match(raw_name)
+                        if name in commune_map:
+                            props["zone_rpa"] = commune_map[name]
+                            matched = True
+                            break
+                
+                if not matched:
+                    # Fallback to Wilaya match
+                    w_candidates = [props.get("NAME_1"), props.get("wilaya")]
+                    for raw_w in w_candidates:
+                        if raw_w:
+                            w_name = normalize_match(raw_w)
+                            if w_name in wilaya_map:
+                                props["zone_rpa"] = wilaya_map[w_name]
+                                break
+                    
+                    if props.get("zone_rpa") is None:
+                        props["zone_rpa"] = "I"
+            else:
+                props["zone_rpa"] = str(props["zone_rpa"])
+                
+        # Cache for subsequent requests
+        _LAYER_CACHE[layer_id] = data
+        return data
+    except Exception as e:
+        return {"error": str(e)}
 
 @app.get("/api/geo/map")
 def get_geojson_wilayas():

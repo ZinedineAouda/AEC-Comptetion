@@ -40,7 +40,7 @@ const RiskSimulationPage = () => {
 
     const fetchHierarchy = async () => {
         try {
-            const res = await fetch('http://localhost:8000/api/portfolio/hierarchy');
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/portfolio/hierarchy`);
             const data = await res.json();
             setHierarchy(data);
             if (data['16 - ALGER']) {
@@ -52,7 +52,7 @@ const RiskSimulationPage = () => {
 
     const lookupRPA = async () => {
         try {
-            const res = await fetch(`http://localhost:8000/api/rpa/lookup?wilaya=${encodeURIComponent(selectedWilaya)}&commune=${encodeURIComponent(selectedCommune)}&group=1A`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/rpa/lookup?wilaya=${encodeURIComponent(selectedWilaya)}&commune=${encodeURIComponent(selectedCommune)}&group=1A`);
             const data = await res.json();
             setRpaInfo(data);
             
@@ -85,7 +85,7 @@ const RiskSimulationPage = () => {
         }, 300);
 
         try {
-            const response = await fetch('http://localhost:8000/api/simulation/run', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/simulation/run`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...params, commune: selectedCommune })

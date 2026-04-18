@@ -1,18 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-main: #050505;
-  --bg-surface: rgba(15, 23, 42, 0.4);
-  --bg-surface-hover: rgba(30, 41, 59, 0.6);
-  --border-color: rgba(255, 255, 255, 0.08);
+  /* GAM Assurances Corporate Identity */
+  --bg-main: #071209;
+  --bg-surface: rgba(11, 35, 18, 0.6);
+  --bg-surface-hover: rgba(20, 55, 30, 0.7);
+  --border-color: rgba(198, 204, 41, 0.12);
   
-  --primary: #3b82f6;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
+  /* Primary: GAM Dark Green */
+  --primary: #2e7d32;
+  --primary-bright: #43a047;
+  --primary-glow: rgba(46, 125, 50, 0.4);
   
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
+  /* Accent: GAM Lime-Yellow */
+  --accent: #c6cc29;
+  --accent-glow: rgba(198, 204, 41, 0.3);
+  
+  --success: #66bb6a;
+  --danger: #ef5350;
+  --warning: #ffa726;
+  --secondary: #81c784;
+  
+  --text-main: #e8f5e9;
+  --text-muted: #81c784;
 }
 
 * {
@@ -26,8 +36,8 @@ body {
   background-color: var(--bg-main);
   color: var(--text-main);
   background-image: 
-    radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.05), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
+    radial-gradient(circle at 15% 50%, rgba(46, 125, 50, 0.07), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(198, 204, 41, 0.05), transparent 25%);
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -38,19 +48,19 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
-/* Glassmorphism Utilities */
+/* Glassmorphism Utilities — GAM Green Glass */
 .glass-panel {
   background: var(--bg-surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(198, 204, 41, 0.22);
 }
 
 /* Layout Utilities */
@@ -70,7 +80,16 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Custom Scrollbar */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 500px; }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+/* Custom Scrollbar — GAM Green */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -78,9 +97,9 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(46, 125, 50, 0.3);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(46, 125, 50, 0.5);
 }

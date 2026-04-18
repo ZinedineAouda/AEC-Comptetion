@@ -16,6 +16,30 @@
 
 .sidebar-header {
   margin-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.gam-logo-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 8px 16px;
+}
+
+.gam-logo-img {
+  height: 64px;
+  width: auto;
+  border-radius: 10px;
+  filter: drop-shadow(0 4px 12px rgba(46, 125, 50, 0.4));
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.gam-logo-img:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 6px 20px rgba(198, 204, 41, 0.4));
 }
 
 .logo-title {
@@ -30,10 +54,11 @@
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  font-weight: 600;
 }
 
 .sidebar-nav {
@@ -58,15 +83,15 @@
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(46, 125, 50, 0.1);
   color: var(--text-main);
 }
 
 .nav-item.active {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
-  border-color: rgba(59, 130, 246, 0.2);
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+  background: rgba(46, 125, 50, 0.15);
+  color: var(--accent);
+  border-color: rgba(198, 204, 41, 0.25);
+  box-shadow: 0 0 20px rgba(46, 125, 50, 0.15);
 }
 
 .icon-wrapper {

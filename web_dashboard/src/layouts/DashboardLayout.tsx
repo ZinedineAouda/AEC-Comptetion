@@ -16,7 +16,9 @@ const DashboardLayout: React.FC = () => {
       {/* Sidebar */}
       <aside className="sidebar glass-panel">
         <div className="sidebar-header">
-          <h2 className="logo-title">AEC<span className="text-primary">Risk</span></h2>
+          <div className="gam-logo-wrap">
+            <img src="/logo.png" alt="GAM Assurances" className="gam-logo-img" />
+          </div>
           <p className="subtitle">Simulation Engine</p>
         </div>
 
