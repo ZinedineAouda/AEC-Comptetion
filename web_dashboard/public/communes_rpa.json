@@ -9,8 +9,8 @@
                 "BOUKADIR"
             ],
             "IIa": [
-                "OULED BEN ABD EL KADER",
-                "HADJADJ"
+                "OULED BEN.AEK",
+                "EL HADJADJ"
             ]
         },
         "default": "III"
@@ -22,7 +22,7 @@
                 "DJEBABRA",
                 "SOUHANE",
                 "LARBAA",
-                "OULED EL SELAMA",
+                "OULED SLAMA",
                 "BOUGARA",
                 "HAMMAM MELOUANE",
                 "AIN ROMANA"
@@ -48,11 +48,11 @@
             "I": [
                 "BOU AICHE",
                 "CHAHBOUNIA",
-                "BOUGHZOUL",
-                "SAREG",
+                "BOUGHEZOUL",
+                "SANEG",
                 "MEFTAHA",
-                "OULED MAREF",
-                "EL AOUNET",
+                "OULED MAAREF",
+                "EL OUINET",
                 "AIN BOUCIF",
                 "SIDI DAMED",
                 "AIN OUKSIR",
@@ -71,8 +71,8 @@
             ],
             "IIb": [
                 "SIDI LAKHDAR",
-                "TASGHAIT",
-                "OULED MAALAH"
+                "TAZGAIT",
+                "OULED MAALEF"
             ]
         },
         "default": "IIa"
@@ -81,18 +81,18 @@
         "groups": {
             "IIa": [
                 "BENI ILMANE",
-                "OUNOUGHA",
-                "HAMMAM DALA A",
+                "OUANOUGHA",
+                "HAMMAM DHALAA",
                 "TARMOUNT",
                 "OULED MANSOUR",
                 "M'SILA",
-                "M'TARFA",
+                "MTARFA",
                 "MAADID",
                 "OULED DERRADJ",
-                "OULED ADDI",
-                "DAHAHNA",
+                "OULED ADDI GUEBALA",
+                "DEHAHNA",
                 "BERHOUM",
-                "AIN KADRA",
+                "AIN KHADRA",
                 "MAGRA",
                 "BELAIBA"
             ]
@@ -103,20 +103,20 @@
         "groups": {
             "I": [
                 "AIN FARES",
-                "AIN FEKRAN",
-                "BOUHANIFIA",
-                "GUERDJOU",
+                "AIN FEKAN",
+                "BOU HANIFIA",
+                "GUERDJOUM",
                 "OUED TARIA",
-                "GHRIS",
-                "BENAIN",
-                "MOKHDA",
+                "GHRISS",
+                "BENIAN",
+                "MAKDHA",
                 "AOUF",
-                "GHAROUS",
+                "GHARROUS",
                 "NESMOT",
-                "M'HAMID",
-                "HACHEM",
+                "MOHAMMADIA",
+                "EL HACHEM",
                 "OUED EL ABTAL",
-                "AIN FERRAH"
+                "AIN FERAH"
             ]
         },
         "default": "IIa"
@@ -126,20 +126,20 @@
             "IIb": [
                 "AFIR",
                 "BENCHOUD",
-                "TAOUERGA",
+                "TAOURGA",
                 "BAGHLIA",
-                "OUED AISSA",
+                "OULED AISSA",
                 "NACIRIA",
-                "BORDJ MENAIL",
+                "BORDJ MENAIEL",
                 "ISSER",
                 "BENI AMRANE",
                 "SOUK EL HAD",
-                "BOUZEGZA KEDAR",
-                "EL KHAROUBA",
+                "BOUZEGZA KEDARA",
+                "EL KHARROUBA",
                 "LARBATACHE",
                 "KHEMIS EL KHECHNA",
                 "OULED MOUSSA",
-                "HAMMADI"
+                "HAMMEDI"
             ],
             "IIa": [
                 "TIMEZRIT",
@@ -152,28 +152,27 @@
     "AIN DEFLA": {
         "groups": {
             "III": [
-                "TACHETA",
-                "ZOUGAGHA",
+                "TACHETA ZEGAGHA",
                 "EL ABADIA",
                 "AIN BOUYAHIA",
                 "EL ATTAF"
             ],
             "IIb": [
                 "EL AMRA",
-                "MEKHTARIA",
+                "MEKHATRIA",
                 "ARIB",
                 "ROUINA",
                 "AIN DEFLA",
-                "BOURASHED",
+                "BOURACHED",
                 "ZEDDINE",
                 "TIBERKANINE",
-                "SEN ALLAH",
-                "MELIANA",
+                "BEN ALLEL",
+                "MILIANA",
                 "AIN TORKI",
                 "HAMMAM RIGHA",
                 "AIN BENIAN",
-                "HOUCEINIA",
-                "BOUMADFAA"
+                "HOCEINIA",
+                "BOU MEDFAA"
             ]
         },
         "default": "IIa"
@@ -189,9 +188,9 @@
             "IIb": [
                 "MERDJA SIDI ABED",
                 "OUED RHIOU",
-                "OUARTZENZ",
+                "OUARIZANE",
                 "DJIDIOUIA",
-                "HAMRI",
+                "EL HAMRI",
                 "BENI ZENTIS"
             ]
         },
@@ -221,7 +220,7 @@
     "BOUIRA": {
         "default": "IIa"
     },
-    "TAMENRASSET": {
+    "TAMANRASSET": {
         "default": "0"
     },
     "TEBESSA": {
@@ -251,7 +250,7 @@
     "SKIKDA": {
         "default": "IIa"
     },
-    "SIDI BEL - ABBES": {
+    "SIDI BEL ABBES": {
         "default": "I"
     },
     "ANNABA": {
@@ -311,7 +310,7 @@
     "GHARDAIA": {
         "default": "0"
     },
-    "EL M'GHAIR": {
+    "EL M'GHAIER": {
         "default": "0"
     },
     "EL MENIAA": {
@@ -320,7 +319,7 @@
     "OULED DJELLAL": {
         "default": "I"
     },
-    "BORDJ B. MOKHTAR": {
+    "BORDJ BADJI MOKHTAR": {
         "default": "0"
     },
     "BENI ABBES": {

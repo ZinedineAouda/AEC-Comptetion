@@ -489,3 +489,136 @@
 .action-btn:active {
   transform: scale(0.95);
 }
+
+/* AI Intelligence Components */
+.ai-mode {
+  padding-bottom: 8px;
+}
+
+.vulnerability-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.vuln-pill {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vuln-type {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.vuln-score {
+  font-size: 24px;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.vuln-label {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.vuln-score.severity-low { color: #22c55e; }
+.vuln-score.severity-medium { color: #f59e0b; }
+.vuln-score.severity-high { color: #ef4444; }
+
+.vuln-label.severity-low { background: rgba(34, 197, 94, 0.15); color: #4ade80; }
+.vuln-label.severity-medium { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.vuln-label.severity-high { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+.model-confidence-box {
+  background: rgba(59, 130, 246, 0.05);
+  border: 1px border: 1px solid rgba(59, 130, 246, 0.2);
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.confidence-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+.confidence-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: #3b82f6;
+  line-height: 1;
+}
+
+.confidence-track {
+  height: 6px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  transition: width 1s ease-out;
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feature-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.feature-row span {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.feature-weight-bar {
+  height: 4px;
+  background: #1e293b;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.weight-fill {
+  height: 100%;
+  background: #f59e0b;
+  border-radius: 2px;
+  transition: width 0.8s ease-in-out;
+}
+
+.feature-row strong {
+  font-size: 12px;
+  color: #f1f5f9;
+  align-self: flex-end;
+}

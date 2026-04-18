@@ -61,7 +61,7 @@ const VERDICT_LABELS: Record<string, { label: string; icon: React.ReactNode; cls
 const ZONES = ['', '0', 'I', 'IIa', 'IIb', 'III'];
 const VERDICTS = ['', 'SEVERELY_UNDERPRICED', 'UNDERPRICED', 'FAIR', 'PROFITABLE', 'OVERPRICED'];
 
-const fmt = (n: number) => new Intl.NumberFormat('fr-DZ', { maximumFractionDigits: 0 }).format(n);
+const fmt = (n: number) => new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(n);
 
 const MyDatabasePage: React.FC = () => {
   const [data, setData] = useState<PolicyProfile[]>([]);
@@ -214,14 +214,14 @@ const MyDatabasePage: React.FC = () => {
             <div className="stat-card">
               <DollarSign size={20} />
               <div>
-                <span className="stat-value">{fmt(stats.total_capital)} DZD</span>
+                <span className="stat-value">{fmt(stats.total_capital)} DZA</span>
                 <span className="stat-label">Total Capital</span>
               </div>
             </div>
             <div className="stat-card">
               <Activity size={20} />
               <div>
-                <span className="stat-value">{fmt(stats.total_premium)} DZD</span>
+                <span className="stat-value">{fmt(stats.total_premium)} DZA</span>
                 <span className="stat-label">Total Premiums</span>
               </div>
             </div>
@@ -383,11 +383,11 @@ const MyDatabasePage: React.FC = () => {
                 <div className="pricing-grid">
                   <div className="pricing-card">
                     <span className="pricing-label">Actual Premium</span>
-                    <span className="pricing-value">{fmt(selectedProfile.premium)} DZD</span>
+                    <span className="pricing-value">{fmt(selectedProfile.premium)} DZA</span>
                   </div>
                   <div className="pricing-card">
                     <span className="pricing-label">Fair Premium (RPA)</span>
-                    <span className="pricing-value accent">{fmt(selectedProfile.fair_premium)} DZD</span>
+                    <span className="pricing-value accent">{fmt(selectedProfile.fair_premium)} DZA</span>
                   </div>
                   <div className="pricing-card full">
                     <span className="pricing-label">Verdict</span>

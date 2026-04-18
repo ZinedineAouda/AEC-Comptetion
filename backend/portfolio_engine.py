@@ -29,6 +29,7 @@ class PortfolioEngine:
     def __init__(self):
         self.profiles: List[Dict[str, Any]] = []
         self.raw_count = 0
+        self.load_cache()
     
     def _extract_wilaya_code(self, wilaya_str: str) -> str:
         """Extract numeric wilaya code from '16 - ALGER' format."""
@@ -86,7 +87,7 @@ class PortfolioEngine:
     def load_cache(self, cache_path: str = None):
         """Load processed profiles from disk if available."""
         if cache_path is None:
-            # Try to find it in data/ or root
+            # Check standard locations
             for p in ["data/portfolio_cache.json.gz", "../data/portfolio_cache.json.gz", "portfolio_cache.json.gz", "../portfolio_cache.json.gz"]:
                 if os.path.exists(p):
                     cache_path = p
@@ -107,7 +108,7 @@ class PortfolioEngine:
     def save_cache(self, cache_path: str = None):
         """Save current profiles to disk using gzip compression."""
         if cache_path is None:
-            # Default to data/ if it exists, otherwise root
+            # Default to data/ if it exists, otherwise use root or parent data
             if os.path.exists("data"):
                 cache_path = "data/portfolio_cache.json.gz"
             elif os.path.exists("../data"):
@@ -227,7 +228,12 @@ class PortfolioEngine:
                     "assessment": assessment
                 })
             
-            self.profiles = final_profiles
+            # Merge final_profiles into self.profiles by policy_id
+            existing_profiles = {p['policy_id']: p for p in self.profiles}
+            for new_p in final_profiles:
+                existing_profiles[new_p['policy_id']] = new_p
+            self.profiles = list(existing_profiles.values())
+            
             print(f"Profiles assembled: {len(self.profiles)}. Saving to cache...")
             
             # Atomic Save

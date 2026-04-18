@@ -243,7 +243,7 @@ const NewClientAnalyzer: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label>Capital Assured (DZD)</label>
+            <label>Capital Assured (DZA)</label>
             <input 
               type="number" 
               value={formData.capital_assure}
@@ -311,7 +311,7 @@ const NewClientAnalyzer: React.FC = () => {
                   {result.estimate !== null && (
                     <div className="estimate-box">
                       <span className="estimate-label">Total Net Premium (Estimate)</span>
-                      <span className="estimate-val">{result.estimate.toLocaleString()} DZD</span>
+                      <span className="estimate-val">{result.estimate.toLocaleString('en-US')} DZA</span>
                     </div>
                   )}
                 </div>

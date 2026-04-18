@@ -6,202 +6,71 @@ import { Shield, MapPin, Activity, Layers, Info } from 'lucide-react';
 import './MapRiskVisualizer.css';
 
 interface MapProps {
-    showZones?: boolean;
-    showLocations?: boolean;
+    activeLayers: any[];
     onFeatureSelect?: (feature: any) => void;
     onStatsReady?: (stats: any) => void;
 }
 
 const MapRiskVisualizer: React.FC<MapProps> = ({ 
-    showZones = true, 
-    showLocations = true,
+    activeLayers = [],
     onFeatureSelect,
     onStatsReady
 }) => {
-    const [geoMap, setGeoMap] = useState<any>(null);
-    const [geoLocs, setGeoLocs] = useState<any>(null);
-    const [communeData, setCommuneData] = useState<any>(null);
+    const [layerDataStore, setLayerDataStore] = useState<Record<string, any>>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchGeo = async () => {
+        const fetchAll = async () => {
+            setLoading(true);
             try {
-                const [mapRes, locsRes, rpaRes] = await Promise.all([
-                    fetch('http://localhost:8000/api/geo/map'),
-                    fetch('http://localhost:8000/api/geo/locations'),
-                    fetch('/communes_rpa_full.json')
-                ]);
-                const mapJson = await mapRes.json();
-                const locsJson = await locsRes.json();
-                const rpaJson = await rpaRes.json();
-                
-                if (mapJson && !mapJson.error) setGeoMap(mapJson);
-                if (locsJson && !locsJson.error) setGeoLocs(locsJson);
-                if (rpaJson) setCommuneData(rpaJson);
-
-                // Calculate Intelligence Stats via Full Portfolio Audit
-                if (mapJson && locsJson && rpaJson && onStatsReady) {
-                    const exposure_breakdown: any = { III: 0, II: 0, I: 0, '0': 0 };
-                    
-                    // Audit every single one of the 3,182 asset points
-                    locsJson.features?.forEach((loc: any) => {
-                        // Helper to find zone for this loc
-                        const info = getPinpointZoneLocally(loc, mapJson, rpaJson);
-                        if (info) {
-                            const z = info.zone;
-                            if (z === '3' || z === 'III') exposure_breakdown.III++;
-                            else if (z === '2' || z === 'II' || z === 'IIb' || z === 'IIa') exposure_breakdown.II++;
-                            else if (z === '1' || z === 'I') exposure_breakdown.I++;
-                            else exposure_breakdown['0']++;
-                        }
-                    });
-
-                    const stats = {
-                        total_policies: locsJson.features?.length || 0,
-                        total_zones: mapJson.features?.length || 0,
-                        by_zone: exposure_breakdown, // Distribute based on asset density
-                        exposure_breakdown
-                    };
-                    onStatsReady(stats);
-                }
+                // Fetch basic stats from portfolio
+                const statsRes = await fetch('http://localhost:8000/api/portfolio/stats');
+                const statsJson = await statsRes.json();
+                if (onStatsReady) onStatsReady(statsJson);
             } catch (err) {
-                console.error("Geo fetch failed", err);
+                console.error("Stats fetch failed", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchGeo();
+        fetchAll();
     }, []);
 
-    // Local helper for initial audit (avoids dependency issue in useEffect)
-    const getPinpointZoneLocally = (feature: any, map: any, rpa: any) => {
-        if (!map || !feature.geometry || !rpa) return null;
-        const coords = feature.geometry.coordinates;
-        const communeName = normalizeName(feature.properties?.NAME || "");
-        
-        let detectedWilayaRaw = null;
-        for (const wilaya of map.features) {
-            const geometries = wilaya.geometry.type === "Polygon" ? [wilaya.geometry.coordinates] : wilaya.geometry.coordinates;
-            for (const shape of geometries) {
-                const polygon = wilaya.geometry.type === "Polygon" ? shape : shape[0];
-                if (isPointInPoly(coords, polygon)) {
-                    detectedWilayaRaw = wilaya.properties.NAME_1;
-                    break;
+    useEffect(() => {
+        // Reactive layer fetching
+        activeLayers.forEach(async (layer) => {
+            if (!layerDataStore[layer.id]) {
+                try {
+                    const res = await fetch(`http://localhost:8000${layer.url}`);
+                    const json = await res.json();
+                    setLayerDataStore(prev => ({ ...prev, [layer.id]: json }));
+                } catch (err) {
+                    console.error(`Failed to fetch layer ${layer.id}`, err);
                 }
             }
-            if (detectedWilayaRaw) break;
-        }
+        });
+    }, [activeLayers]);
 
-        if (!detectedWilayaRaw) return null;
-        const detectedWilaya = normalizeName(detectedWilayaRaw);
-        const wilayaEntry = rpa[detectedWilaya];
-        if (wilayaEntry) {
-            if (wilayaEntry.groups) {
-                for (const [zone, communes] of Object.entries(wilayaEntry.groups)) {
-                    if ((communes as string[]).some(c => normalizeName(c) === communeName)) return { zone, wilaya: detectedWilaya };
-                }
-            }
-            return { zone: wilayaEntry.default, wilaya: detectedWilaya };
-        }
-        return null;
+    const getZoneColor = (zone: string | number) => {
+        const z = String(zone).toUpperCase();
+        if (z === '3' || z === 'III') return '#ef4444'; // Critical
+        if (z === 'IIB') return '#f97316';               // High-Moderate
+        if (z === '2' || z === 'II' || z === 'IIA') return '#fbbf24'; // Moderate
+        if (z === '1' || z === 'I') return '#22c55e';    // Low
+        return '#94a3b8';                                // Very Low
     };
 
-
-
-    const normalizeName = (name: string) => {
-        if (!name) return "";
-        return name.toUpperCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // Remove accents
-            .replace(/-/g, " ")
-            .replace(/[^A-Z0-9 ]/g, "") // Strip Arabic and special chars
-            .replace(/\s+/g, " ") // Multi-space to single
-            .trim();
-    };
-
-    const isPointInPoly = (point: number[], vs: any[]) => {
-        const x = point[0], y = point[1];
-        let inside = false;
-        for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-            const xi = vs[i][0], yi = vs[i][1];
-            const xj = vs[j][0], yj = vs[j][1];
-            const intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-            if (intersect) inside = !inside;
-        }
-        return inside;
-    };
-
-    const getCommuneZone = (feature: any) => {
-        if (!geoMap || !feature.geometry || !communeData) return null;
-        const coords = feature.geometry.coordinates;
-        const communeName = normalizeName(feature.properties?.NAME || "");
-        
-        let detectedWilayaRaw = null;
-        for (const wilaya of geoMap.features) {
-            if (!wilaya.geometry) continue;
-            const geometries = wilaya.geometry.type === "Polygon" ? [wilaya.geometry.coordinates] : wilaya.geometry.coordinates;
-            for (const shape of geometries) {
-                const polygon = wilaya.geometry.type === "Polygon" ? shape : shape[0];
-                if (isPointInPoly(coords, polygon)) {
-                    detectedWilayaRaw = wilaya.properties.NAME_1;
-                    break;
-                }
-            }
-            if (detectedWilayaRaw) break;
-        }
-
-        if (!detectedWilayaRaw) return null;
-        const detectedWilaya = normalizeName(detectedWilayaRaw);
-        const wilayaEntry = communeData[detectedWilaya];
-                           
-        if (wilayaEntry) {
-            if (wilayaEntry.groups) {
-                for (const [zone, communes] of Object.entries(wilayaEntry.groups)) {
-                    if ((communes as string[]).some(c => normalizeName(c) === communeName)) return { zone, wilaya: detectedWilaya };
-                }
-            }
-            return { zone: wilayaEntry.default, wilaya: detectedWilaya };
-        }
-        return null;
-    };
-
-
-    const getStyle = (feature: any) => {
+    const getStyle = (feature: any, opacity = 0.6) => {
         const zone = feature?.properties?.zone_rpa;
-        let color = '#d1d5db'; 
-        
-        if (zone === 3 || zone === 'III') color = '#ef4444';
-        else if (zone === 2 || zone === 'II' || zone === 'IIa' || zone === 'IIb') color = '#fbbf24';
-        else if (zone === 1 || zone === 'I') color = '#22c55e';
-        else if (zone === 0 || zone === '0') color = '#9ca3af';
+        const color = getZoneColor(zone);
 
         return {
             fillColor: color,
             weight: 0.8,
             opacity: 1,
             color: '#4b5563',
-            fillOpacity: 0.6,
+            fillOpacity: opacity,
         };
-    };
-
-    const pointToLayer = (feature: any, latlng: L.LatLng) => {
-        const resolvedInfo = getCommuneZone(feature);
-        const resolvedZone = resolvedInfo?.zone;
-        
-        let markerColor = "white";
-        const z = String(resolvedZone);
-        if (z === "3" || z === "III") markerColor = "#ef4444";
-        else if (z === "2" || z === "II" || z === "IIb" || z === "IIa") markerColor = "#fbbf24";
-        else if (z === "1" || z === "I") markerColor = "#22c55e";
-
-        return L.circleMarker(latlng, {
-            radius: 4,
-            fillColor: markerColor,
-            color: "black",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 1
-        });
     };
 
     const onEachFeature = (feature: any, layer: any) => {
@@ -213,50 +82,33 @@ const MapRiskVisualizer: React.FC<MapProps> = ({
             },
             mouseout: (e: any) => {
                 const target = e.target;
-                target.setStyle(getStyle(feature));
+                target.setStyle(getStyle(feature, layer.options.fillOpacity));
                 if (onFeatureSelect) onFeatureSelect(null);
             }
         });
         
         if (feature.properties && feature.properties.NAME_1) {
-            layer.bindTooltip(`${feature.properties.NAME_1} (RPA ${feature.properties.zone_rpa})`, { sticky: true, className: 'region-tooltip' });
+            layer.bindTooltip(`${feature.properties.NAME_1} (Wilaya RPA ${feature.properties.zone_rpa})`, { sticky: true, className: 'region-tooltip' });
         }
     };
-
-    const onEachLocation = (feature: any, layer: any) => {
-        const communeName = feature.properties?.NAME;
-        const resolvedInfo = getCommuneZone(feature);
-        const resolvedZone = resolvedInfo?.zone;
-        
-        layer.on({
-            click: () => {
-                if (onFeatureSelect) {
-                    onFeatureSelect({
-                        ...feature.properties,
-                        NAME_1: feature.properties.NAME,
-                        zone_rpa: resolvedZone || "Check PDF",
-                        is_commune: true
-                    });
-                }
-            }
-        });
-
-        if (communeName) {
-            const tooltipContent = resolvedZone 
-                ? `${communeName} (Pinpoint RPA ${resolvedZone})`
-                : `${communeName}`;
-            layer.bindTooltip(tooltipContent, { direction: 'top', offset: [0, -5] });
-        }
-    };
-
-
-
 
     if (loading) {
         return (
             <div className="map-loading-card">
                 <Shield className="spin" size={32} />
                 <p>Decoding Geospatial Packages...</p>
+                <div className="sub-text">Connecting to Seismic Risk Engine...</div>
+            </div>
+        );
+    }
+
+    // Fallback if no layers are discovered globally
+    if (activeLayers.length === 0 && !loading) {
+        return (
+            <div className="map-info-card">
+                <Info className="text-blue-400" size={32} />
+                <p>No active geospatial layers selected.</p>
+                <div className="sub-text">Use the Layer Registry to project data onto the map.</div>
             </div>
         );
     }
@@ -272,29 +124,95 @@ const MapRiskVisualizer: React.FC<MapProps> = ({
                 >
                     <TileLayer
                         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                        attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
                     />
-                    {geoMap && showZones && (
-                        <GeoJSON 
-                            data={geoMap} 
-                            style={getStyle}
-                            onEachFeature={onEachFeature}
-                        />
-                    )}
-                    {geoLocs && showLocations && (
-                        <GeoJSON 
-                            data={geoLocs} 
-                            pointToLayer={pointToLayer}
-                            onEachFeature={onEachLocation}
-                        />
-                    )}
+                    
+                    {activeLayers.map(layerDef => {
+                        const data = layerDataStore[layerDef.id];
+                        if (!data) return null;
+                        
+                        return (
+                            <GeoJSON 
+                                key={`layer-dynamic-${layerDef.id}`}
+                                data={data} 
+                                style={(f) => getStyle(f, layerDef.id.includes('gadm') ? 0.3 : 0.6)}
+                                pointToLayer={(feature, latlng) => {
+                                    const z = feature.properties?.zone_rpa || "I";
+                                    const color = getZoneColor(z);
+                                    return L.circleMarker(latlng, {
+                                        radius: layerDef.id.includes('portfolio') ? 3 : 5,
+                                        fillColor: color,
+                                        color: layerDef.id.includes('portfolio') ? "#000" : "#ffffff",
+                                        weight: 1,
+                                        opacity: 1,
+                                        fillOpacity: 0.8
+                                    });
+                                }}
+                                onEachFeature={(feature, layer) => {
+                                    layer.on({
+                                        mouseover: (e: any) => {
+                                            const target = e.target;
+                                            if (target.setStyle) {
+                                                target.setStyle({ fillOpacity: 1, weight: 2, color: '#111827' });
+                                            }
+                                            if (onFeatureSelect) onFeatureSelect(feature.properties);
+                                        },
+                                        mouseout: (e: any) => {
+                                            const target = e.target;
+                                            if (target.setStyle) {
+                                                const z = feature.properties?.zone_rpa || "I";
+                                                const color = getZoneColor(z);
+                                                target.setStyle({
+                                                    fillColor: color,
+                                                    color: layerDef.id.includes('portfolio') ? "#000" : "#ffffff",
+                                                    weight: 1,
+                                                    fillOpacity: 0.8
+                                                });
+                                            }
+                                            if (onFeatureSelect) onFeatureSelect(null);
+                                        }
+                                    });
+                                    const title = feature.properties.NAME_1 || feature.properties.NAME || 'Asset';
+                                    layer.bindTooltip(`<b>${title}</b><br/>Zone RPA: ${feature.properties.zone_rpa}`, { sticky: true });
+                                }}
+                            />
+                        );
+                    })}
                 </MapContainer>
+
+                {/* Floating Map Legend - Only shown when high-risk layers are visible */}
+                {activeLayers.length > 0 && (
+                    <div className="map-legend-overlay animate-fade-in">
+                        <div className="legend-header">
+                            <Shield size={12} className="text-blue-400" />
+                            <span>RPA 99/2003 Seismic Intelligence</span>
+                        </div>
+                        <div className="legend-grid">
+                            <div className="legend-item">
+                                <span className="color-box" style={{ background: '#ef4444' }}></span>
+                                <span>Zone III (Critical)</span>
+                            </div>
+                            <div className="legend-item">
+                                <span className="color-box" style={{ background: '#f97316' }}></span>
+                                <span>Zone IIb (Severe)</span>
+                            </div>
+                            <div className="legend-item">
+                                <span className="color-box" style={{ background: '#fbbf24' }}></span>
+                                <span>Zone IIa (Moderate)</span>
+                            </div>
+                            <div className="legend-item">
+                                <span className="color-box" style={{ background: '#22c55e' }}></span>
+                                <span>Zone I (Low)</span>
+                            </div>
+                        </div>
+                        <div className="sub-text" style={{ fontSize: '9px', marginTop: '8px', opacity: 0.6 }}>
+                            {activeLayers.length} layers currently projected
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 };
 
-
-
 export default MapRiskVisualizer;
-

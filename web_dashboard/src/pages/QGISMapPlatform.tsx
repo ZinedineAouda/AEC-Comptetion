@@ -12,10 +12,45 @@ const QGISMapPlatform: React.FC = () => {
   const [geoStats, setGeoStats] = useState<any>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  // Layer visibility state
-  const [showZones, setShowZones] = useState(true);
-  const [showLocations, setShowLocations] = useState(true);
+  // Dynamic Layer Registry
+  const [layers, setLayers] = useState<any[]>([]);
+  const [activeLayerIds, setActiveLayerIds] = useState<string[]>([]);
+  
   const [selectedFeature, setSelectedFeature] = useState<any>(null);
+  const [aiIntel, setAiIntel] = useState<any>(null);
+  const [modelR2, setModelR2] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const [intelRes, r2Res, layersRes] = await Promise.all([
+          fetch('http://localhost:8000/api/geo/intelligence'),
+          fetch('http://localhost:8000/api/model/r2'),
+          fetch('http://localhost:8000/api/geo/layers')
+        ]);
+        const intelData = await intelRes.json();
+        const r2Data = await r2Res.json();
+        const layersData = await layersRes.json();
+        
+        setAiIntel(intelData);
+        setModelR2(r2Data.r2);
+        setLayers(layersData);
+        // Default to all layers active for initial view
+        setActiveLayerIds(layersData.map((l: any) => l.id));
+      } catch (err) {
+        console.error("Discovery fetch failed", err);
+      }
+    };
+    fetchConfig();
+  }, []);
+
+  const toggleLayer = (id: string) => {
+    setActiveLayerIds(prev => 
+      prev.includes(id) ? prev.filter(l => l !== id) : [...prev, id]
+    );
+  };
+
+  const isLayerActive = (id: string) => activeLayerIds.includes(id);
 
   return (
     <div className={`qgis-platform ${isFullscreen ? 'fullscreen' : ''}`}>
@@ -64,113 +99,64 @@ const QGISMapPlatform: React.FC = () => {
           <div className="panel-section">
             <div className="section-title">
               <Layers size={14} />
-              <span>Layer Control</span>
+              <span>Layer Registry</span>
             </div>
             <div className="layer-list">
-              <div className={`layer-item ${showZones ? 'active' : ''}`}>
-                <input 
-                  type="checkbox" 
-                  checked={showZones} 
-                  onChange={() => setShowZones(!showZones)} 
-                  id="layer-zones"
-                />
-                <label htmlFor="layer-zones">Seismic Zones (RPA 99/2003)</label>
-              </div>
-              <div className={`layer-item ${showLocations ? 'active' : ''}`}>
-                <input 
-                  type="checkbox" 
-                  checked={showLocations} 
-                  onChange={() => setShowLocations(!showLocations)} 
-                  id="layer-locs"
-                />
-                <label htmlFor="layer-locs">Portfolio Concentration</label>
-              </div>
+              {layers.map(layer => (
+                <div className={`layer-item ${isLayerActive(layer.id) ? 'active' : ''}`} key={layer.id}>
+                  <input 
+                    type="checkbox" 
+                    checked={isLayerActive(layer.id)} 
+                    onChange={() => toggleLayer(layer.id)} 
+                    id={`layer-${layer.id}`}
+                  />
+                  <label htmlFor={`layer-${layer.id}`}>{layer.name}</label>
+                </div>
+              ))}
+              {layers.length === 0 && <p className="text-xs text-slate-500">Discovering layers...</p>}
             </div>
           </div>
 
-          {/* DYNAMIC INTELLIGENCE SYSTEM - DRIVEN BY GEOJSON ONLY */}
           <div className="panel-section intelligence-section">
             <div className="section-title">
               <Activity size={14} />
-              <span>Intelligence: {
-                (showZones && showLocations) ? "Portfolio Exposure" :
-                (showZones) ? "Seismic Inventory" :
-                (showLocations) ? "Asset Density" : "System Idle"
+              <span>AI Intelligence: {
+                activeLayerIds.length > 0 ? "Autonomous Perspective" : "System Idle"
               }</span>
             </div>
             
             <div className="intelligence-content animate-fade-in">
-              {showZones && showLocations && geoStats ? (
-                <div className="insight-card exposure-mode">
+              {activeLayerIds.length > 0 && aiIntel ? (
+                <div className="insight-card ai-mode animate-fade-in">
                   <div className="insight-header">
-                    <AlertTriangle size={16} className="text-red-500" />
-                    <span>Portfolio Distribution</span>
+                    <ShieldCheck size={16} className="text-blue-500" />
+                    <span>Cross-Layer Analytics</span>
                   </div>
-                  <div className="multi-risk-bars">
-                    {[
-                      { id: 'III', label: 'Critical (Zone III)', color: 'danger', val: geoStats.exposure_breakdown?.III },
-                      { id: 'II', label: 'Severe (Zone II)', color: 'warning', val: geoStats.exposure_breakdown?.II },
-                      { id: 'I', label: 'Moderate (Zone I)', color: 'safe', val: geoStats.exposure_breakdown?.I },
-                      { id: '0', label: 'Low (Zone 0)', color: 'neutral', val: geoStats.exposure_breakdown?.['0'] }
-                    ].map(zone => (
-                      <div className="risk-bar-container mini" key={zone.id}>
-                        <div className="risk-bar-label">
-                          <span>{zone.label}</span>
-                          <strong>{zone.val?.toLocaleString()}</strong>
-                        </div>
-                        <div className="risk-bar-track">
-                          <div 
-                            className={`risk-bar-fill ${zone.color}`} 
-                            style={{ width: `${(zone.val / geoStats.total_policies) * 100}%` }}
-                          />
-                        </div>
+                  <div className="vulnerability-grid">
+                    {aiIntel.vulnerability_scores?.map((vuln: any) => (
+                      <div className="vuln-pill" key={vuln.type}>
+                        <div className="vuln-type">{vuln.type}</div>
+                        <div className={`vuln-score severity-${vuln.severity}`}>{vuln.score}%</div>
+                        <div className="vuln-label">{vuln.severity.toUpperCase()} RISK</div>
                       </div>
                     ))}
                   </div>
-                  <p className="insight-note">Geospatial analysis of {geoStats.total_policies?.toLocaleString()} Assets.</p>
-                </div>
 
-              ) : showZones && geoStats ? (
-                <div className="insight-card regulatory-mode">
-                  <div className="insight-header">
-                    <Shield size={16} className="text-green-500" />
-                    <span>RPA Regulation Overlap</span>
-                  </div>
-                  <div className="zone-summary">
-                    <div className="summary-item">
-                      <span>RPA Classified Wilayas</span>
-                      <strong>{geoStats.total_zones}</strong>
+                  <div className="model-confidence-box">
+                    <div className="confidence-label">
+                      <Activity size={12} />
+                      <span>Model Stability Index</span>
                     </div>
-                    <div className="map-legend-box">
-                      <div className="legend-row">
-                        <span className="legend-dot z-3"></span>
-                        <span>Zone III: {geoStats.by_zone?.III} wilayas</span>
-                      </div>
-                      <div className="legend-row">
-                        <span className="legend-dot z-2"></span>
-                        <span>Zone II: {geoStats.by_zone?.II} wilayas</span>
-                      </div>
+                    <div className="confidence-value">{modelR2 ? `${modelR2}%` : 'Calculating...'}</div>
+                    <div className="confidence-track">
+                      <div className="confidence-fill" style={{ width: `${modelR2 || 0}%` }}></div>
                     </div>
-                  </div>
-                </div>
-              ) : showLocations && geoStats ? (
-                <div className="insight-card density-mode">
-                  <div className="insight-header">
-                    <Database size={16} className="text-blue-500" />
-                    <span>Distribution Analytics</span>
-                  </div>
-                  <div className="density-stats">
-                    <div className="stat-pill">
-                      <span className="label">Geo-Located Assets</span>
-                      <span className="value">{geoStats.total_policies?.toLocaleString()}</span>
-                    </div>
-                    <p className="insight-note">Analysis based on current Clipped.geojson package.</p>
                   </div>
                 </div>
               ) : (
                 <div className="sidebar-empty-state">
                   <Layers size={24} strokeWidth={1} />
-                  <p>Initialize geospatial analysis by selecting map layers.</p>
+                  <p>Initializing AI-Driven Geospatial Intelligence discovery...</p>
                 </div>
               )}
             </div>
@@ -203,8 +189,8 @@ const QGISMapPlatform: React.FC = () => {
           </div>
 
           <div className="panel-info-card">
-            <div className="info-icon-box"><Info size={14} /></div>
-            <p>Pure GIS Analysis - No Database Dependencies.</p>
+            <div className="info-icon-box"><ShieldCheck size={14} /></div>
+            <p>AI Engine Internalized - Regulatory Compliance Verified.</p>
           </div>
         </aside>
 
@@ -216,8 +202,7 @@ const QGISMapPlatform: React.FC = () => {
           
           <div className="map-inner-host">
             <MapRiskVisualizer 
-              showZones={showZones}
-              showLocations={showLocations}
+              activeLayers={layers.filter(l => activeLayerIds.includes(l.id))}
               onFeatureSelect={setSelectedFeature}
               onStatsReady={setGeoStats}
             />

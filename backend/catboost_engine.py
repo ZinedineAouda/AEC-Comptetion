@@ -51,10 +51,20 @@ class InsuranceCatBoostEngine:
 
         # Priority 2: Fallback to master XLSX if CSV is missing
         if df is None:
-            xlsx_path = os.path.join(os.path.dirname(self.data_path), "CATNAT_2023_2025.xlsx")
-            if os.path.exists(xlsx_path):
+            # Check root, then data/
+            possible_xlsx = [
+                os.path.join(os.path.dirname(self.data_path), "CATNAT_2023_2025.xlsx"),
+                os.path.join(os.path.dirname(self.data_path), "data", "CATNAT_2023_2025.xlsx")
+            ]
+            xlsx_path = None
+            for p in possible_xlsx:
+                if os.path.exists(p):
+                    xlsx_path = p
+                    break
+
+            if xlsx_path and os.path.exists(xlsx_path):
                 try:
-                    print("CSV missing. Training from master XLSX...")
+                    print(f"CSV missing. Training from {xlsx_path}...")
                     xl = pd.ExcelFile(xlsx_path)
                     frames = []
                     for sheet in xl.sheet_names:

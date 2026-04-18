@@ -1,13 +1,13 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
-import { Map, BrainCircuit, ShieldAlert, Settings, BarChart3 } from 'lucide-react';
+import { Map, BrainCircuit, ShieldAlert, Settings, BarChart3, Dices } from 'lucide-react';
 import './DashboardLayout.css';
 
 const DashboardLayout: React.FC = () => {
   const navItems = [
     { name: 'GIS Platform', path: '/map', icon: <Map size={20} /> },
     { name: 'Analytical Engine', path: '/analytics', icon: <BrainCircuit size={20} /> },
-    { name: 'Strategy Engine', path: '/recommendations', icon: <ShieldAlert size={20} /> },
+    { name: 'Risk Simulation', path: '/simulation', icon: <Dices size={20} /> },
     { name: 'Portfolio Intel', path: '/database', icon: <BarChart3 size={20} /> },
   ];
 
