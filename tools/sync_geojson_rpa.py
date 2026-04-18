@@ -52,64 +52,41 @@ def is_point_in_multipoly(x, y, multipoly):
             if is_point_in_poly(x, y, ring): return True
     return False
 
-def sync_rpa_scoped_fuzzy():
-    DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
-    GEOJSON_POINTS = os.path.join(DATA_DIR, "Clipped.geojson")
-    GEOJSON_WILAYAS = os.path.join(DATA_DIR, "gadm41.geojson")
-    REGISTRY_PATH = os.path.join(DATA_DIR, "seismic_registry_rpa.json")
-    BACKUP_PATH = os.path.join(DATA_DIR, "Clipped.geojson.bak")
+def get_commune_name(props):
+    # Try common nomenclature patterns
+    for key in ["NAME", "NAME_2", "COMMUNE", "Commune", "NOM_COMM"]:
+        if key in props and props[key]:
+            return props[key]
+    return ""
 
-    print(f"Loading Global Registry...")
-    with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
-        registry = json.load(f)
+def sync_file(file_path, registry, wilaya_boundaries, wilaya_overrides):
+    print(f"Syncing: {os.path.basename(file_path)}...")
     
-    # Pre-calculate normalized override indices per Wilaya
-    wilaya_overrides = {}
-    for w_name, w_info in registry.items():
-        norm_w = normalize_match(w_name)
-        wilaya_overrides[norm_w] = {}
-        for zone, communes in w_info.get("groups", {}).items():
-            for c in communes:
-                nc = normalize_match(c)
-                wilaya_overrides[norm_w][nc] = zone
-                # Add surgical aliases for M'Sila
-                if norm_w == "M'SILA":
-                    if "ILMANE" in nc: wilaya_overrides[norm_w]["ILMENE"] = zone
-                    if "GUEBALA" in nc: wilaya_overrides[norm_w]["ADDI"] = zone
-                    if "DHALAA" in nc: wilaya_overrides[norm_w]["DELAA"] = zone
-                    if "KHADRA" in nc: wilaya_overrides[norm_w]["KADRA"] = zone
-
-    print(f"Loading Wilaya Boundaries...")
-    with open(GEOJSON_WILAYAS, "r", encoding="utf-8") as f:
-        wilaya_geo = json.load(f)
-
-    wilaya_boundaries = []
-    norm_registry = {normalize_match(k): v for k, v in registry.items()}
-    
-    for feature in wilaya_geo["features"]:
-        raw_name = feature["properties"].get("NAME_1", "")
-        norm_name = normalize_match(raw_name)
-        geometry = feature["geometry"]
-        wilaya_boundaries.append({
-            "name": norm_name,
-            "coords": geometry["coordinates"] if geometry["type"] == "MultiPolygon" else [geometry["coordinates"]],
-            "info": norm_registry.get(norm_name, {"default": "I"})
-        })
-
-    print(f"Processing Points with Scoped Fuzzy Logic...")
-    with open(GEOJSON_POINTS, "r", encoding="utf-8") as f:
-        points_geo = json.load(f)
-
-    if not os.path.exists(BACKUP_PATH): shutil.copy2(GEOJSON_POINTS, BACKUP_PATH)
+    with open(file_path, "r", encoding="utf-8") as f:
+        geo_data = json.load(f)
 
     counts = {"match": 0, "spatial": 0, "fallback": 0}
     
-    for feature in points_geo["features"]:
+    for feature in geo_data["features"]:
         props = feature["properties"]
         geom = feature["geometry"]
-        if not geom or "coordinates" not in geom: continue
-        px, py = geom["coordinates"]
-        n_name = normalize_match(props.get("NAME", ""))
+        if not geom: continue
+        
+        # Determine coordinates (Handle Points and Polygons)
+        if geom["type"] == "Point":
+            px, py = geom["coordinates"]
+        else:
+            # For Polygons, use a simple centroid/first-point representative for spatial join
+            try:
+                if geom["type"] == "Polygon":
+                    px, py = geom["coordinates"][0][0]
+                elif geom["type"] == "MultiPolygon":
+                    px, py = geom["coordinates"][0][0][0]
+                else: continue
+            except: continue
+
+        raw_comm_name = get_commune_name(props)
+        n_name = normalize_match(raw_comm_name)
 
         found_zone = None
         
@@ -121,46 +98,81 @@ def sync_rpa_scoped_fuzzy():
         
         if parent_w:
             w_name = parent_w["name"]
-            # 2. Localized Fuzzy Override Search (Scoped to this wilaya)
             local_overrides = wilaya_overrides.get(w_name, {})
             if n_name in local_overrides:
                 found_zone = local_overrides[n_name]
                 counts["match"] += 1
             else:
-                # Fuzzy match within this wilaya list
                 matches = difflib.get_close_matches(n_name, list(local_overrides.keys()), n=1, cutoff=0.6)
                 if matches:
                     found_zone = local_overrides[matches[0]]
                     counts["match"] += 1
                 else:
-                    # Final fallback: parent defaults
                     found_zone = parent_w["info"]["default"]
                     counts["spatial"] += 1
         else:
-            # Totally outside all polygons (shouldn't happen with GADM usually)
             found_zone = "I"
             counts["fallback"] += 1
 
         props["zone_rpa"] = found_zone
+        # Clean up legacy names if present
+        if "DEGREE\nOF RISK" in props: props["zone_rpa_legacy"] = props.pop("DEGREE\nOF RISK")
 
-    print(f"Scoped Sync Complete!")
-    print(f"  - Localized Matches: {counts['match']}")
-    print(f"  - Wilaya Defaults: {counts['spatial']}")
+    with open(file_path, "w", encoding="utf-8") as f:
+        json.dump(geo_data, f, indent=2)
     
-    # Audit Checklist
-    msila_targets = ["M'Sila", "Dhalaa", "Beni Ilmene", "Magra", "Berhoum", "Ouled Derradj", "Addi", "Ouanougha", "Khadra"]
-    found_msila = []
-    for f in points_geo["features"]:
-        nm = str(f['properties'].get('NAME', ''))
-        zr = f['properties'].get('zone_rpa', '')
-        if any(t in nm for t in msila_targets) and zr == 'IIa':
-            found_msila.append(nm)
-    
-    print(f"Verified IIa Points in M'Sila Area: {len(set(found_msila))}")
-    print(f"Examples: {list(set(found_msila))[:5]}")
+    print(f"  Done. Matches: {counts['match']} | Spatial: {counts['spatial']} | Fallback: {counts['fallback']}")
 
-    with open(GEOJSON_POINTS, "w", encoding="utf-8") as f:
-        json.dump(points_geo, f, indent=2)
+def bulk_sync():
+    DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+    GEOJSON_WILAYAS = os.path.join(DATA_DIR, "gadm41.geojson")
+    REGISTRY_PATH = os.path.join(DATA_DIR, "seismic_registry_rpa.json")
+
+    print(f"Loading Global Registry...")
+    with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+        registry = json.load(f)
+    
+    wilaya_overrides = {}
+    for w_name, w_info in registry.items():
+        norm_w = normalize_match(w_name)
+        wilaya_overrides[norm_w] = {}
+        for zone, communes in w_info.get("groups", {}).items():
+            for c in communes:
+                nc = normalize_match(c)
+                wilaya_overrides[norm_w][nc] = zone
+                if norm_w == "M'SILA":
+                    if "ILMANE" in nc: wilaya_overrides[norm_w]["ILMENE"] = zone
+                    if "GUEBALA" in nc: wilaya_overrides[norm_w]["ADDI"] = zone
+                    if "DHALAA" in nc: wilaya_overrides[norm_w]["DELAA"] = zone
+                    if "KHADRA" in nc: wilaya_overrides[norm_w]["KADRA"] = zone
+
+    print(f"Loading Wilaya Reference Boundaries...")
+    with open(GEOJSON_WILAYAS, "r", encoding="utf-8") as f:
+        wilaya_geo = json.load(f)
+
+    wilaya_boundaries = []
+    norm_registry = {normalize_match(k): v for k, v in registry.items()}
+    for feature in wilaya_geo["features"]:
+        raw_name = feature["properties"].get("NAME_1", "")
+        norm_name = normalize_match(raw_name)
+        geometry = feature["geometry"]
+        wilaya_boundaries.append({
+            "name": norm_name,
+            "coords": geometry["coordinates"] if geometry["type"] == "MultiPolygon" else [geometry["coordinates"]],
+            "info": norm_registry.get(norm_name, {"default": "I"})
+        })
+
+    # Files to process
+    targets = [
+        "Clipped.geojson", 
+        "Algeria Communes.geojson", 
+        "Algeria Communes attitude.geojson"
+    ]
+    
+    for t in targets:
+        p = os.path.join(DATA_DIR, t)
+        if os.path.exists(p):
+            sync_file(p, registry, wilaya_boundaries, wilaya_overrides)
 
 if __name__ == "__main__":
-    sync_rpa_scoped_fuzzy()
+    bulk_sync()
